@@ -1,17 +1,20 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StatusBar, StyleSheet, Text, View} from 'react-native';
 
 const DateHead = ({date}) => {
   const dateFormat = {
     year: date.getFullYear(),
-    month: date.getMonth(),
+    month: date.getMonth() + 1,
     day: date.getDate(),
   };
   const formatted = `${dateFormat.year}년 ${dateFormat.month}월 ${dateFormat.day}일`;
   return (
-    <View style={styles.block}>
-      <Text style={styles.dateText}>{formatted}</Text>
-    </View>
+    <>
+      <StatusBar backgroundColor="#26a69a" barStyle="light-content" />
+      <View style={styles.block}>
+        <Text style={styles.dateText}>{formatted}</Text>
+      </View>
+    </>
   );
 };
 
