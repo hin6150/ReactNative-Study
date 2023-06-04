@@ -14,6 +14,7 @@ import AppTodo from './components/AppTodo';
 import Empty from './components/Empty';
 import TodoList from './components/TodoList';
 import AsyncStorage from '@react-native-community/async-storage';
+import todosStorage from './storages/todosStorages';
 
 const App = () => {
   const curr = new Date();
