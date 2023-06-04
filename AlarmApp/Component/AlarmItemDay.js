@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
-const AlramItemDay = ({day, text}) => {
+const AlarmItemDay = ({day, text}) => {
   return day.map((item, idx) => {
     return (
       <View key={idx}>
@@ -16,4 +16,4 @@ const AlramItemDay = ({day, text}) => {
 };
 
 const styles = StyleSheet.create({color: {color: 'blue'}});
-export default AlramItemDay;
+export default AlarmItemDay;

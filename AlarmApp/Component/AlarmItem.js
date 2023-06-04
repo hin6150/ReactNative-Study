@@ -7,13 +7,13 @@ import {
   TouchableNativeFeedback,
   View,
 } from 'react-native';
-import AlramItemDay from './AlramItemDay';
+import AlarmItemDay from './AlarmItemDay';
 
-const AlramItem = ({item, onToggle}) => {
+const AlarmItem = ({item, onToggle}) => {
   const {hour, min, id, toggle} = item;
 
   const [day, setDay] = useState([
-    {text: '월', check: false},
+    {text: '월', check: true},
     {text: '화', check: false},
     {text: '수', check: false},
     {text: '목', check: false},
@@ -30,9 +30,9 @@ const AlramItem = ({item, onToggle}) => {
         </Text>
       </View>
       <View style={styles.rightBlock}>
-        <AlramItemDay day={day} text={styles.text}></AlramItemDay>
+        <AlarmItemDay day={day} text={styles.text}></AlarmItemDay>
         <Switch
-          trackColor={{false: '#767577', true: '#6200EE'}}
+          trackColor={{false: '#white', true: '#6200EE'}}
           thumbColor={'#f4f3f4'}
           onValueChange={() => onToggle(id)}
           value={toggle}
@@ -69,4 +69,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AlramItem;
+export default AlarmItem;
