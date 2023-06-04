@@ -53,8 +53,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    console.log(todos);
-
     async function save() {
       try {
         await AsyncStorage.setItem('todos', JSON.stringify(todos));
