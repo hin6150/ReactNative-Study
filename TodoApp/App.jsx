@@ -53,28 +53,12 @@ const App = () => {
   };
 
   useEffect(() => {
-    async function save() {
-      try {
-        await AsyncStorage.setItem('todos', JSON.stringify(todos));
-      } catch (e) {
-        console.log('failed to save todos');
-      }
-    }
-    save();
-  }, [todos]);
+    todosStorage.get().then(setTodos).catch(console.error);
+  }, []);
 
   useEffect(() => {
-    async function load() {
-      try {
-        const rawTodos = await AsyncStorage.getItem('todos');
-        const savedTodos = JSON.parse(rawTodos);
-        setTodos(savedTodos);
-      } catch (e) {
-        console.log('Failed to load todos');
-      }
-    }
-    load();
-  }, []);
+    todosStorage.set(todos).catch(console.error);
+  }, [todos]);
 
   return (
     <SafeAreaProvider>
