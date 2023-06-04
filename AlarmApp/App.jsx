@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Button,
   SafeAreaView,
@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import AlarmList from './Component/AlarmList';
+import alarmStorage from './storages/alarmStorage';
 
 const App = () => {
   const [alarms, setAlrams] = useState([
@@ -18,7 +19,15 @@ const App = () => {
     {id: 3, hour: 19, min: 53, week: [], toggle: false},
   ]);
 
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    alarmStorage.get().then(setAlrams).catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    alarmStorage.set(alarms).catch(console.error);
+  }, [alarms]);
 
   const onConfirm = selectedDate => {
     console.log(selectedDate);
@@ -46,6 +55,11 @@ const App = () => {
     setAlrams(nextAlrams);
   };
 
+  const onRemove = id => {
+    const nextAlrams = alarms.filter(alarm => alarm.id !== id);
+    setAlrams(nextAlrams);
+  };
+
   return (
     <SafeAreaView style={styles.list}>
       <View style={styles.box}>
@@ -67,7 +81,21 @@ const App = () => {
           </View>
         </TouchableNativeFeedback>
       </View>
-      <AlarmList alarms={alarms} onToggle={onToggle}></AlarmList>
+      {alarms.length > 0 ? (
+        <AlarmList
+          alarms={alarms}
+          onToggle={onToggle}
+          onRemove={onRemove}></AlarmList>
+      ) : (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text
+            style={{
+              fontSize: 32,
+            }}>
+            알람을 등록해주세요!
+          </Text>
+        </View>
+      )}
       <DateTimePickerModal
         mode={'time'}
         isVisible={visible}
