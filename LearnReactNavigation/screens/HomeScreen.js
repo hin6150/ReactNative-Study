@@ -5,7 +5,6 @@ const HomeScreen = ({navigation}) => {
   useEffect(() => {
     navigation.setOptions({title: 'home'});
   }, [navigation]);
-
   return (
     <View>
       <Button
@@ -17,6 +16,9 @@ const HomeScreen = ({navigation}) => {
       <Button
         title="Detail 3 열기"
         onPress={() => navigation.navigate('Detail', {id: 3})}></Button>
+      <Button
+        title="HeaderLess 열기"
+        onPress={() => navigation.navigate('Headerless')}></Button>
     </View>
   );
 };

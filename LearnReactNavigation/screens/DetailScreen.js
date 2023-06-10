@@ -1,7 +1,11 @@
+import {useNavigation, useRoute} from '@react-navigation/native';
 import React from 'react';
 import {Button, Text, View} from 'react-native';
 
-const DetailScreen = ({route, navigation}) => {
+const DetailScreen = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
+
   return (
     <View>
       <Text>Detail Page {route.params.id}</Text>
