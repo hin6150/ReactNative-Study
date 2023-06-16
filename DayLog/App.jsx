@@ -1,8 +1,13 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
+import RootStack from './screens/RootStack';
 
 const App = () => {
-  return <NavigationContainer></NavigationContainer>;
+  return (
+    <NavigationContainer>
+      <RootStack></RootStack>
+    </NavigationContainer>
+  );
 };
 
 export default App;
