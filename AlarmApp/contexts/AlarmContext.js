@@ -6,23 +6,25 @@ import alarmStorage from '../storages/alarmStorage';
 const AlarmContext = createContext();
 
 export function AlarmContextProvider({children}) {
-  const [alarms, setAlarms] = useState(
-    Array.from({length: 5}).map((_, index) => ({
-      id: uuidv4(),
+  const [alarms, setAlarms] = useState([
+    {
+      id: new uuidv4(),
       hour: 12,
-      min: index * 5,
-      week: [true, false, true, false, false, true, false],
+      min: 30,
+      week: [false, false, false, false, false, false, false],
       toggle: true,
-    })),
-  );
+      date: new Date(),
+      weekCheck: false,
+    },
+  ]);
 
-  // useEffect(() => {
-  //   alarmStorage.get().then(setAlarms).catch(console.error);
-  // }, []);
+  useEffect(() => {
+    alarmStorage.get().then(setAlarms).catch(console.error);
+  }, []);
 
-  // useEffect(() => {
-  //   alarmStorage.set(alarms).catch(console.error);
-  // }, [alarms]);
+  useEffect(() => {
+    alarmStorage.set(alarms).catch(console.error);
+  }, [alarms]);
 
   const onToggle = id => {
     const nextAlrams = alarms.map(alram =>
@@ -36,13 +38,15 @@ export function AlarmContextProvider({children}) {
     setAlarms(nextAlrams);
   };
 
-  const onCreate = ({hour, min, week, toggle}) => {
+  const onCreate = ({hour, min, week, toggle, date, weekCheck}) => {
     const alarm = {
       id: uuidv4(),
       hour,
       min,
       week,
       toggle,
+      date,
+      weekCheck,
     };
     setAlarms([alarm, ...alarms]);
   };

@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {weekString} from '../storages/formatData';
+import {weekString} from '../../storages/formatData';
 
 const AlarmItemDay = ({week, text}) => {
   return week.map((item, idx) => (

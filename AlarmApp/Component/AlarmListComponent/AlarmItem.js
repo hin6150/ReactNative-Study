@@ -1,19 +1,13 @@
-import React, {useState} from 'react';
-import {
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableNativeFeedback,
-  View,
-} from 'react-native';
+import React from 'react';
+import {Pressable, StyleSheet, Switch, Text, View} from 'react-native';
 import AlarmItemDay from './AlarmItemDay';
 import {useNavigation} from '@react-navigation/native';
 
 const AlarmItem = ({item, onToggle}) => {
-  const {hour, min, id, week, toggle} = item;
+  const {hour, min, id, week, toggle, weekCheck, date} = item;
   const navigation = useNavigation();
+
+  const dateFormat = new Date(date);
 
   const pressHandle = () => {
     navigation.navigate('Add', {
@@ -32,8 +26,15 @@ const AlarmItem = ({item, onToggle}) => {
           {hour > 12 ? hour - 12 : hour} : {min}
         </Text>
       </View>
+
       <View style={styles.rightBlock}>
-        <AlarmItemDay week={week} text={styles.text}></AlarmItemDay>
+        {weekCheck ? (
+          <AlarmItemDay week={week} text={styles.text} />
+        ) : (
+          <Text>{`${
+            dateFormat.getMonth() + 1
+          }월 ${dateFormat.getDate()}일`}</Text>
+        )}
         <Switch
           trackColor={{false: '#white', true: '#6200EE'}}
           thumbColor={'#f4f3f4'}
