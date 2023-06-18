@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {
   FlatList,
+  Pressable,
   StyleSheet,
   Switch,
   Text,
@@ -8,21 +9,23 @@ import {
   View,
 } from 'react-native';
 import AlarmItemDay from './AlarmItemDay';
+import {useNavigation} from '@react-navigation/native';
 
 const AlarmItem = ({item, onToggle}) => {
-  const {hour, min, id, toggle} = item;
+  const {hour, min, id, week, toggle} = item;
+  const navigation = useNavigation();
 
-  const [day, setDay] = useState([
-    {text: '월', check: true},
-    {text: '화', check: false},
-    {text: '수', check: false},
-    {text: '목', check: false},
-    {text: '금', check: false},
-    {text: '토', check: false},
-    {text: '일', check: false},
-  ]);
+  const pressHandle = () => {
+    navigation.navigate('Add', {
+      item,
+    });
+  };
+
   return (
-    <View style={styles.block}>
+    <Pressable
+      style={styles.block}
+      android_ripple={{color: '#ededed'}}
+      onPress={pressHandle}>
       <View style={styles.leftBlock}>
         <Text style={styles.text}>{hour > 12 ? '오후' : '오전'}</Text>
         <Text style={styles.text}>
@@ -30,7 +33,7 @@ const AlarmItem = ({item, onToggle}) => {
         </Text>
       </View>
       <View style={styles.rightBlock}>
-        <AlarmItemDay day={day} text={styles.text}></AlarmItemDay>
+        <AlarmItemDay week={week} text={styles.text}></AlarmItemDay>
         <Switch
           trackColor={{false: '#white', true: '#6200EE'}}
           thumbColor={'#f4f3f4'}
@@ -38,7 +41,7 @@ const AlarmItem = ({item, onToggle}) => {
           value={toggle}
         />
       </View>
-    </View>
+    </Pressable>
   );
 };
 

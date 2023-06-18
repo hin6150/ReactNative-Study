@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import WheelPicker from 'react-native-wheely';
 import {Button, SafeAreaView, Text, View} from 'react-native';
-import TimeWheel from '../Component/TimeWheel';
+import TimeWheel from '../component/TimeWheel';
 import {min_5, timeTo12, timeTo60_5, time_5} from '../storages/formatData';
 
 const TimerScreen = () => {
