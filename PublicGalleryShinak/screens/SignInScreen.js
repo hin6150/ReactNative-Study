@@ -60,6 +60,7 @@ function SignInScreen({navigation, route}) {
       };
       const msg = messages[e.code] || `${isSignUp ? '가입' : '로그인'} 실패`;
       Alert.alert('실패', msg);
+      console.log(e);
     } finally {
       setLoading(false);
     }
