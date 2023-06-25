@@ -1,49 +1,98 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import BorderedInput from '../components/BorderedInput';
-import CustomButton from '../components/CustomButton';
+import SignButtons from '../components/SignButtons';
+import SignInForm from '../components/SignForm';
+import {signIn, signUp} from '../lib/auth';
+import {getUser} from '../lib/users';
+import {useUserContext} from '../contexts/UserContext';
 
 function SignInScreen({navigation, route}) {
-  const {isSignUp} = route.params ?? {};
+  const {isSignUp} = route.params || {};
+  const [form, setForm] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [loading, setLoading] = useState();
+  const {setUser} = useUserContext();
+
+  const createChangeTextHandler = name => value => {
+    setForm({...form, [name]: value});
+  };
+
+  const onSubmit = async () => {
+    Keyboard.dismiss();
+
+    const {email, password, confirmPassword} = form;
+
+    if (isSignUp && password !== confirmPassword) {
+      Alert.alert('실패', '비밀번호가 일치하지 않습니다.');
+      console.log({password, confirmPassword});
+      return;
+    }
+
+    setLoading(true);
+    const info = {email, password};
+
+    try {
+      const {user} = isSignUp ? await signUp(info) : await signIn(info);
+      const profile = await getUser(user.uid);
+      if (!profile) {
+        navigation.navigate('Welcome', {uid: user.uid});
+      } else {
+        setUser(profile);
+      }
+    } catch (e) {
+      const messages = {
+        'auth/email-already-in-use': '이미 가입된 이메일입니다.',
+        'auth/wrong-password': '잘못된 비밀번호입니다.',
+        'auth/user-not-found': '존재하지 않는 계정입니다.',
+        'auth/invalid-email': '유효하지 않은 이메일 주소입니다.',
+      };
+      const msg = messages[e.code] || `${isSignUp ? '가입' : '로그인'} 실패`;
+      Alert.alert('실패', msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <SafeAreaView style={styles.fullscreen}>
-      <Text style={styles.text}>PublicGallery</Text>
-      <View style={styles.form}>
-        <BorderedInput hasMarginBottom placeholder="이메일" />
-        <BorderedInput placeholder="비밀번호" hasMarginBottom={isSignUp} />
-        {isSignUp && <BorderedInput placeholder="비밀번호 확인" />}
-        <View style={styles.buttons}>
-          {isSignUp ? (
-            <>
-              <CustomButton title="회원가입" hasMarginBottom />
-              <CustomButton
-                title="로그인"
-                theme="secondary"
-                onPress={() => {
-                  navigation.goBack();
-                }}
-              />
-            </>
-          ) : (
-            <>
-              <CustomButton title="로그인" hasMarginBottom />
-              <CustomButton
-                title="회원가입"
-                theme="secondary"
-                onPress={() => {
-                  navigation.push('SignIn', {isSignUp: true});
-                }}
-              />
-            </>
-          )}
+    <KeyboardAvoidingView
+      style={styles.keyboardAvoidingView}
+      behavior={Platform.select({ios: 'padding'})}>
+      <SafeAreaView style={styles.fullscreen}>
+        <Text style={styles.text}>PublicGallery</Text>
+        <View style={styles.form}>
+          <SignInForm
+            isSignUp={isSignUp}
+            onSubmit={onSubmit}
+            form={form}
+            createChangeTextHandler={createChangeTextHandler}
+          />
+          <SignButtons
+            isSignUp={isSignUp}
+            onSubmit={onSubmit}
+            loading={loading}
+          />
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   fullscreen: {
     flex: 1,
     alignItems: 'center',
@@ -57,9 +106,6 @@ const styles = StyleSheet.create({
     marginTop: 64,
     width: '100%',
     paddingHorizontal: 16,
-  },
-  buttons: {
-    marginTop: 64,
   },
 });
 
