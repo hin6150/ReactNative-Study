@@ -9,6 +9,8 @@ import {
 import PostCard from '../components/PostCard';
 import usePosts from '../hooks/usePosts';
 import events from '../lib/events';
+import SplashScreen from 'react-native-splash-screen';
+
 function FeedScreen() {
   const {posts, noMorePost, refreshing, onLoadMore, onRefresh, removePost} =
     usePosts();
@@ -21,6 +23,13 @@ function FeedScreen() {
   //     events.removeListener('removePost', removePost);
   //   };
   // }, [onRefresh, removePost]);
+
+  const postsReady = posts !== null;
+  useEffect(() => {
+    if (postsReady) {
+      SplashScreen.hide();
+    }
+  }, [postsReady]);
 
   return (
     <FlatList
