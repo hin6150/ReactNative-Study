@@ -3,18 +3,9 @@ import {View, TouchableOpacity} from 'react-native';
 import {StyleSheet, Animated, Image} from 'react-native';
 import {Images, backgroundImageList, objectImageList} from './Images';
 import SoundPlayer from 'react-native-sound-player';
+import useHooks from '../hooks/useHooks';
 
 function PlayPage() {
-  return (
-    <>
-      <View>
-        <PlayPageView />
-      </View>
-    </>
-  );
-}
-
-function PlayPageView() {
   useEffect(() => {
     try {
       SoundPlayer.playSoundFile('mainbgm', 'mp3');
@@ -23,69 +14,24 @@ function PlayPageView() {
     }
   }, []);
 
-  const [backgroundImage, setBackgroundImage] = useState(Images.Background3);
-  const [objectImage, setObjectImage] = useState(Images.Object3);
-  const [startButtonOpacity, setStartButtonOpacity] = useState(1);
-  const [startButtonDisabled, setStartButtonDisabled] = useState(false);
-  const [toggleFail, setToggleFail] = useState(false);
+  return (
+    <View>
+      <PlayPageView />
+    </View>
+  );
+}
 
-  const objectY = useRef(new Animated.Value(100)).current;
-  let animation = useRef(null);
-
-  useEffect(() => {
-    getRandomValue();
-  }, []);
-
-  const getRandomNumber = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  };
-  const getRandomValue = () => {
-    const backgroundImageNumber = getRandomNumber(0, 2);
-    const obejctImageNumber = getRandomNumber(0, 4);
-
-    setBackgroundImage(backgroundImageList[backgroundImageNumber]);
-    setObjectImage(objectImageList[obejctImageNumber]);
-  };
-
-  const StartBtnClick = () => {
-    if (!animation.current) {
-      setStartButtonDisabled(!startButtonDisabled);
-      setStartButtonOpacity(0.5);
-      animation.current = Animated.timing(objectY, {
-        toValue: 700,
-        duration: getRandomNumber(10, 20) * 100, // 애니메이션 지속 시간(ms)
-        useNativeDriver: true, // 네이티브 드라이버 사용 여부
-      });
-      animation.current.start();
-    } else {
-      getRandomValue();
-      objectY.setValue(100); // 초기값으로 되돌리기
-      setToggleFail(false);
-      animation.current = null;
-    }
-  };
-  const StopBtnClick = () => {
-    if (animation.current) {
-      setStartButtonDisabled(false);
-      setStartButtonOpacity(1);
-      animation.current.stop();
-    }
-  };
-
-  useEffect(() => {
-    const listener = objectY.addListener(({value}) => {
-      if (value > 500) {
-        setStartButtonDisabled(false);
-        setStartButtonOpacity(1);
-        animation.current.stop();
-        setToggleFail(true);
-      }
-    });
-
-    return () => {
-      objectY.removeListener(listener);
-    };
-  }, [objectY]);
+function PlayPageView() {
+  const {
+    backgroundImage,
+    objectImage,
+    startButtonOpacity,
+    startButtonDisabled,
+    toggleFail,
+    objectY,
+    startBtnClick,
+    stopBtnClick,
+  } = useHooks();
 
   return (
     <>
@@ -106,9 +52,9 @@ function PlayPageView() {
           <View style={styles.StopLine} />
           <OperationBtn
             startButtonDisabled={startButtonDisabled}
-            StartBtnClick={StartBtnClick}
-            startButtonOpacit={startButtonDisabled}
-            StopBtnClick={StopBtnClick}
+            startBtnClick={startBtnClick}
+            startButtonOpacity={startButtonOpacity}
+            stopBtnClick={stopBtnClick}
           />
           {toggleFail && <Image source={Images.Failed} style={styles.Failed} />}
         </View>
@@ -142,22 +88,22 @@ function CharacterIcon() {
 
 function OperationBtn({
   startButtonDisabled,
-  StartBtnClick,
+  startBtnClick,
   startButtonOpacity,
-  StopBtnClick,
+  stopBtnClick,
 }) {
   return (
     <View style={styles.OperationBtn}>
       <TouchableOpacity
         disabled={startButtonDisabled}
-        onPress={StartBtnClick}
+        onPress={startBtnClick}
         activeOpacity={0.8}>
         <Image
           source={Images.StartBtn}
           style={[styles.StartBtn, {opacity: startButtonOpacity}]}
         />
       </TouchableOpacity>
-      <TouchableOpacity onPress={StopBtnClick} activeOpacity={0.8}>
+      <TouchableOpacity onPress={stopBtnClick} activeOpacity={0.8}>
         <Image source={Images.StopBtn} style={styles.StopBtn} />
       </TouchableOpacity>
     </View>
