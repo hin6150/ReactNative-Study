@@ -1,7 +1,7 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useEffect} from 'react';
 import {View, TouchableOpacity} from 'react-native';
 import {StyleSheet, Animated, Image} from 'react-native';
-import {Images, backgroundImageList, objectImageList} from './Images';
+import {Images} from './Images';
 import SoundPlayer from 'react-native-sound-player';
 import useHooks from '../hooks/useHooks';
 
@@ -25,7 +25,6 @@ function PlayPageView() {
   const {
     backgroundImage,
     objectImage,
-    startButtonOpacity,
     startButtonDisabled,
     toggleFail,
     objectY,
@@ -53,7 +52,6 @@ function PlayPageView() {
           <OperationBtn
             startButtonDisabled={startButtonDisabled}
             startBtnClick={startBtnClick}
-            startButtonOpacity={startButtonOpacity}
             stopBtnClick={stopBtnClick}
           />
           {toggleFail && <Image source={Images.Failed} style={styles.Failed} />}
@@ -86,12 +84,7 @@ function CharacterIcon() {
   );
 }
 
-function OperationBtn({
-  startButtonDisabled,
-  startBtnClick,
-  startButtonOpacity,
-  stopBtnClick,
-}) {
+function OperationBtn({startButtonDisabled, startBtnClick, stopBtnClick}) {
   return (
     <View style={styles.OperationBtn}>
       <TouchableOpacity
@@ -100,7 +93,7 @@ function OperationBtn({
         activeOpacity={0.8}>
         <Image
           source={Images.StartBtn}
-          style={[styles.StartBtn, {opacity: startButtonOpacity}]}
+          style={[styles.StartBtn, {opacity: startButtonDisabled ? 0.5 : 1}]}
         />
       </TouchableOpacity>
       <TouchableOpacity onPress={stopBtnClick} activeOpacity={0.8}>
