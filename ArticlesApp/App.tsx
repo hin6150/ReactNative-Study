@@ -1,14 +1,13 @@
 import React from 'react';
-import {SafeAreaView, Text, View} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import RootStack from './screens/Rootstack';
 
-const App = () => {
+function App() {
   return (
-    <SafeAreaView>
-      <View>
-        <Text>안녕 리액트 네이티브</Text>
-      </View>
-    </SafeAreaView>
+    <NavigationContainer>
+      <RootStack />
+    </NavigationContainer>
   );
-};
+}
 
 export default App;
