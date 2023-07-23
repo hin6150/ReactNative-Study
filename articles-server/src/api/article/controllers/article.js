@@ -8,13 +8,23 @@ const { createCoreController } = require('@strapi/strapi').factories;
 
 module.exports = createCoreController('api::article.article', ({ strapi }) => ({
 	async create(ctx) {
-		ctx.request.body.data.user = ctx.state.user.id;
+		ctx.request.body.user = ctx.state.user.id;
 
-		const entity = await strapi
-			.service('api::article.article')
-			.create(ctx.request.body);
+		const entity = await strapi.entityService.create('api::article.article', {
+			data: { ...ctx.request.body, publishedAt: new Date() },
+			populate: 'user',
+		});
 
 		return entity;
+	},
+	async find(ctx) {
+		const entries = await strapi.entityService.findMany(
+			'api::article.article',
+			{
+				populate: '*',
+			},
+		);
+		return entries;
 	},
 	async update(ctx) {
 		const { id } = ctx.params; // URL 파라미터에서 id 추출

@@ -8,12 +8,11 @@ const { createCoreController } = require('@strapi/strapi').factories;
 
 module.exports = createCoreController('api::comment.comment', ({ strapi }) => ({
 	async create(ctx) {
-		ctx.request.body.data.user = ctx.state.user.id;
-		console.log(ctx.request.body.data);
+		ctx.request.body.user = ctx.state.user.id;
 
 		const { articleId } = ctx.params;
 
-		ctx.request.body.data.article = articleId;
+		ctx.request.body.article = articleId;
 
 		// 게시글 존재 유무 확인
 		// id로 데이터 조회
@@ -25,9 +24,10 @@ module.exports = createCoreController('api::comment.comment', ({ strapi }) => ({
 			ctx.throw(404);
 		}
 
-		const entity = await strapi
-			.service('api::comment.comment')
-			.create(ctx.request.body);
+		const entity = await strapi.entityService.create('api::comment.comment', {
+			data: ctx.request.body,
+			populate: '*',
+		});
 
 		return entity;
 	},
