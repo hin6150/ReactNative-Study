@@ -25,8 +25,8 @@ module.exports = createCoreController('api::comment.comment', ({ strapi }) => ({
 		}
 
 		const entity = await strapi.entityService.create('api::comment.comment', {
-			data: ctx.request.body,
-			populate: '*',
+			data: { ...ctx.request.body, publishedAt: new Date() },
+			populate: 'user',
 		});
 
 		return entity;
@@ -39,6 +39,7 @@ module.exports = createCoreController('api::comment.comment', ({ strapi }) => ({
 				filters: {
 					article: ctx.params.articleId,
 				},
+				populate: 'user',
 			},
 		);
 

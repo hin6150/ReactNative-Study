@@ -21,11 +21,24 @@ module.exports = createCoreController('api::article.article', ({ strapi }) => ({
 		const entries = await strapi.entityService.findMany(
 			'api::article.article',
 			{
-				populate: '*',
+				populate: 'user',
 			},
 		);
 		return entries;
 	},
+	async findOne(ctx) {
+		const { id } = ctx.params; // URL 파라미터에서 id 추출
+
+		const entry = await strapi.entityService.findOne(
+			'api::article.article',
+			id,
+			{
+				populate: 'user',
+			},
+		);
+		return entry;
+	},
+
 	async update(ctx) {
 		const { id } = ctx.params; // URL 파라미터에서 id 추출
 
@@ -41,7 +54,7 @@ module.exports = createCoreController('api::article.article', ({ strapi }) => ({
 		}
 
 		// user 정보는 변경할 수 없도록 처리
-		if (ctx.request.body.data.user) {
+		if (ctx.request.body.user) {
 			return ctx.throw(400, 'user field cannot be changed');
 		}
 		// 사용자의 id와 article의 작성자 id가 일치하는지 확인
@@ -53,7 +66,7 @@ module.exports = createCoreController('api::article.article', ({ strapi }) => ({
 		const entity = await strapi.entityService.update(
 			'api::article.article',
 			id,
-			{ data: ctx.request.body.data },
+			{ data: ctx.request.body },
 		);
 		// 응답 반환
 		return entity;
