@@ -60,7 +60,7 @@ module.exports = createCoreController('api::comment.comment', ({ strapi }) => ({
 		}
 
 		// article 또는 user 변경 막기
-		if (ctx.request.body.data.article || ctx.request.body.data.user) {
+		if (ctx.request.body.article || ctx.request.body.user) {
 			return ctx.throw(400, 'article or user field cannot be changed');
 		}
 		// 사용자 확인
@@ -72,7 +72,7 @@ module.exports = createCoreController('api::comment.comment', ({ strapi }) => ({
 		const entity = await strapi.entityService.update(
 			'api::comment.comment',
 			id,
-			{ data: ctx.request.body.data },
+			{ data: ctx.request.body, populate: 'user' },
 		);
 		// 응답 반환
 		return entity;

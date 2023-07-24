@@ -18,12 +18,28 @@ module.exports = createCoreController('api::article.article', ({ strapi }) => ({
 		return entity;
 	},
 	async find(ctx) {
+		const { _sort, _limit, id_lt, id_gt } = ctx.query;
+
+		// 기본 id_lt 값 설정: id_lt 값이 없는 경우 기본적으로 Infinity로 설정합니다.
+		const idLtValue = id_lt ? id_lt : Infinity;
+
+		const filters = { id: { $lt: idLtValue } };
+
+		// id_gt 값이 있을 경우, 해당 값보다 큰 id 값을 조회합니다.
+		if (id_gt) {
+			filters.id.$gt = id_gt;
+		}
+
 		const entries = await strapi.entityService.findMany(
 			'api::article.article',
 			{
+				sort: { id: 'desc' },
+				filters,
+				limit: _limit,
 				populate: 'user',
 			},
 		);
+
 		return entries;
 	},
 	async findOne(ctx) {
@@ -66,7 +82,7 @@ module.exports = createCoreController('api::article.article', ({ strapi }) => ({
 		const entity = await strapi.entityService.update(
 			'api::article.article',
 			id,
-			{ data: ctx.request.body },
+			{ data: ctx.request.body, populate: '*' },
 		);
 		// 응답 반환
 		return entity;
