@@ -9,6 +9,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 /* MainTab */
 export type MainTabParamList = {
   Articles: undefined;
+  UserMenu: undefined;
 };
 export type MainTabNavigationScreenParams =
   NavigatorScreenParams<MainTabParamList>;
@@ -24,6 +25,12 @@ export type RootStackParamList = {
   MainTab: MainTabNavigationScreenParams;
   Article: {
     id: number;
+  };
+  Register: undefined;
+  Login: undefined;
+  MyArticles: undefined;
+  Write: {
+    articleId?: number;
   };
 };
 export type RootStackNavigationProp =

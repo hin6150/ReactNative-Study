@@ -1,14 +1,32 @@
 import React from 'react';
-import {View, StyleSheet, FlatList} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
 import {Article} from '../api/types';
 import ArticleItem from './ArticleItem';
+import WriteButton from './WriteButton';
 
 export interface ArticlesProps {
   articles: Article[];
+  showWriteButton?: boolean;
+  isFetchingNextPage: boolean;
+  fetchNextPage(): void;
+  refresh(): void;
+  isRefreshing: boolean;
 }
 
-function Articles({articles}: ArticlesProps) {
-  // TODO: renderItem 구현 예정
+function Articles({
+  articles,
+  showWriteButton,
+  isFetchingNextPage,
+  fetchNextPage,
+  refresh,
+  isRefreshing,
+}: ArticlesProps) {
   return (
     <FlatList
       data={articles}
@@ -23,9 +41,23 @@ function Articles({articles}: ArticlesProps) {
       keyExtractor={item => item.id.toString()}
       style={styles.list}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
-      ListFooterComponent={() =>
-        // articles가 1개 이상 있을 때만 최하단 테두리 보여주기
-        articles.length > 0 ? <View style={styles.separator} /> : null
+      ListHeaderComponent={() => (showWriteButton ? <WriteButton /> : null)}
+      ListFooterComponent={() => (
+        <>
+          {articles.length > 0 ? <View style={styles.separator} /> : null}
+          {isFetchingNextPage && (
+            <ActivityIndicator
+              size="small"
+              color="black"
+              style={styles.spinner}
+            />
+          )}
+        </>
+      )}
+      onEndReachedThreshold={0.5}
+      onEndReached={fetchNextPage}
+      refreshControl={
+        <RefreshControl onRefresh={refresh} refreshing={isRefreshing} />
       }
     />
   );
@@ -39,6 +71,11 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 1,
     backgroundColor: '#cfd8dc',
+  },
+  spinner: {
+    backgroundColor: 'white',
+    paddingTop: 32,
+    paddingBottom: 32,
   },
 });
 
